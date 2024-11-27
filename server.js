@@ -1,45 +1,88 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+const express = require("express");
+const bodyParser = require("body-parser");
 
 const app = express();
 const PORT = 3000;
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors());
 
-// Sample Data
-let users = [
-    { id: 1, name: 'Alice', email: 'alice@example.com' },
-    { id: 2, name: 'Bob', email: 'bob@example.com' },
+// In-memory data store with two default tasks
+let tasks = [
+    {
+        id: 1,
+        title: "Prepare Presentation",
+        description: "Create slides for the client meeting",
+        state: "urgent",
+    },
+    {
+        id: 2,
+        title: "Code Review",
+        description: "Review code for the new feature branch",
+        state: "not urgent",
+    },
 ];
 
-// Routes
-// Get all users
-app.get('/api/users', (req, res) => {
-    res.json(users);
+// CRUD Operations
+
+// 1. Get all tasks
+app.get("/tasks", (req, res) => {
+    res.json(tasks);
 });
 
-// Get a user by ID
-app.get('/api/users/:id', (req, res) => {
-    const user = users.find(u => u.id === parseInt(req.params.id));
-    if (user) {
-        res.json(user);
+// 2. Get a single task by ID
+app.get("/tasks/:id", (req, res) => {
+    const { id } = req.params;
+    const task = tasks.find((t) => t.id === parseInt(id));
+    if (task) {
+        res.json(task);
     } else {
-        res.status(404).send('User not found');
+        res.status(404).json({ message: "Task not found" });
     }
 });
 
-// Add a new user
-app.post('/api/users', (req, res) => {
-    const newUser = {
-        id: users.length + 1,
-        name: req.body.name,
-        email: req.body.email,
+// 3. Create a new task
+app.post("/tasks", (req, res) => {
+    const { title, description, state } = req.body;
+    if (!title || !description || !state) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+    const newTask = {
+        id: tasks.length + 1,
+        title,
+        description,
+        state,
     };
-    users.push(newUser);
-    res.status(201).json(newUser);
+    tasks.push(newTask);
+    res.status(201).json(newTask);
+});
+
+// 4. Update a task by ID
+app.put("/tasks/:id", (req, res) => {
+    const { id } = req.params;
+    const { title, description, state } = req.body;
+
+    const taskIndex = tasks.findIndex((t) => t.id === parseInt(id));
+
+    if (taskIndex !== -1) {
+        tasks[taskIndex] = { ...tasks[taskIndex], title, description, state };
+        res.json(tasks[taskIndex]);
+    } else {
+        res.status(404).json({ message: "Task not found" });
+    }
+});
+
+// 5. Delete a task by ID
+app.delete("/tasks/:id", (req, res) => {
+    const { id } = req.params;
+    const taskIndex = tasks.findIndex((t) => t.id === parseInt(id));
+
+    if (taskIndex !== -1) {
+        tasks.splice(taskIndex, 1);
+        res.json({ message: "Task deleted successfully" });
+    } else {
+        res.status(404).json({ message: "Task not found" });
+    }
 });
 
 // Start the server

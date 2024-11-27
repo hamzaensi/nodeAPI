@@ -17,11 +17,11 @@ users: User[] = [
   ];
 8.4 : Afficher la liste de users 
 8.5 : Programmer les 2 buttons  
-9 Pour les products 
+9: Pour les tasks 
 9.1 : créer un service pour "API call"
 9.2 : Consume this Service dans un component products
-9.1 : Afficher la liste de products 
-10. Pour les services : 
+9.1 : Appliquer le cRUD
+10: Pour les services : 
 10.1 : créer un component service 
 10.2 : Définir dans le component une liste de services 
 10.3 : Afficher cette liste dans la template
