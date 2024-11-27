@@ -1,30 +1,32 @@
-1- lancer le script de back-end : nodeAPI : node server.js 
-2- vérifier la liste de services : http://localhost:3000/api/users
-3- créer un projet angular
-4- installer bootstrap et le configurer 
-5- créer le component Header 
-6- créer le compoent footer 
-7- ajouter la navigation : users , products , services 
-8- Pour users : 
-8.1 : créer un modèle pour la description d'un USER 
-8.2 : créer un component "user-list"
-8.3 : Ajouter la liste suivante :
-users: User[] = [
-    { name: 'John Doe', job: 'Software Engineer', age: 30 },
-    { name: 'Jane Smith', job: 'Graphic Designer', age: 25 },
-    { name: 'Sam Wilson', job: 'Project Manager', age: 40 },
-    { name: 'Alice Johnson', job: 'UX/UI Designer', age: 28 }
-  ];
-8.4 : Afficher la liste de users 
-8.5 : Programmer les 2 buttons  
-9: Pour les tasks 
-9.1 : créer un service pour "API call"
-9.2 : Consume this Service dans un component products
-9.1 : Appliquer le cRUD
-10: Pour les services : 
-10.1 : créer un component service 
-10.2 : Définir dans le component une liste de services 
-10.3 : Afficher cette liste dans la template
+1: Initialisation du projet Flutter
+1.1: Créer un nouveau projet Flutter.
+1.2: Configurer les dépendances nécessaires dans le fichier pubspec.yaml :
+- get
+- http
+- flutter_spinkit (pour les indicateurs de chargement, optionnel)
 
+2- Test le back-end avec Node.js : node server.js
+http://localhost:3000/api/tasks
 
+3. Intégration de l'API dans Flutter
+3.1 : Configurer un service API dans Flutter pour effectuer des 3.3.2 : appels HTTP (GET, POST, PUT, DELETE) vers l'API Node.js.
+3.3 : Créer un modèle Dart pour représenter les tâches.
+
+4. Implémentation de la gestion d'état avec GetX
+4.1 Créer un TaskController avec :
+4.2 Une liste observable des tâches.
+4.3 Méthodes pour ajouter, modifier, supprimer et récupérer les tâches via l'API.
+4.5 Gérer les états de chargement (loading) et les erreurs avec GetX.
+
+5. Création de l'interface utilisateur
+5.1 Écran principal avec une liste de tâches affichées dans trois colonnes : ToDo, Doing, et Done.
+5.2 Un bouton flottant pour ajouter une nouvelle tâche :
+5.3 Formulaire pour saisir le titre et la description de la tâche.
+5.4 Fonctionnalité de glisser-déposer (drag-and-drop) ou d'interaction pour changer l'état d'une tâche.
+5.5 Mise à jour automatique de l'interface grâce à GetX.
+6. Ajout de la navigation
+6.1 Utiliser GetX pour une navigation simple :
+6.2 Écran de connexion (Login, password).
+6.3 Écran principal (liste des tâches).
+6.4 Écran d'ajout ou de modification d'une tâche.
 

@@ -4,88 +4,92 @@ const bodyParser = require("body-parser");
 const app = express();
 const PORT = 3000;
 
-// Middleware
+// Middleware pour parser le corps des requêtes JSON
 app.use(bodyParser.json());
 
-// In-memory data store with two default tasks
+// Modèle de données pour les tâches
 let tasks = [
     {
         id: 1,
-        title: "Prepare Presentation",
-        description: "Create slides for the client meeting",
-        state: "urgent",
+        titre: "Étudier Node.js",
+        description: "Suivre un tutoriel complet sur Node.js pour les débutants.",
+        etat: "todo",
     },
     {
         id: 2,
-        title: "Code Review",
-        description: "Review code for the new feature branch",
-        state: "not urgent",
+        titre: "Préparer une présentation",
+        description: "Créer les slides pour la réunion de demain.",
+        etat: "doing",
     },
 ];
 
-// CRUD Operations
+// Routes RESTful
 
-// 1. Get all tasks
-app.get("/tasks", (req, res) => {
-    res.json(tasks);
-});
+// 1. Ajouter une tâche
+app.post("/api/tasks", (req, res) => {
+    const { titre, description, etat } = req.body;
 
-// 2. Get a single task by ID
-app.get("/tasks/:id", (req, res) => {
-    const { id } = req.params;
-    const task = tasks.find((t) => t.id === parseInt(id));
-    if (task) {
-        res.json(task);
-    } else {
-        res.status(404).json({ message: "Task not found" });
+    // Validation
+    if (!titre || !description || !["todo", "doing", "done"].includes(etat)) {
+        return res.status(400).json({
+            message: "Les champs 'titre', 'description' et 'etat' (todo, doing, done) sont obligatoires.",
+        });
     }
-});
 
-// 3. Create a new task
-app.post("/tasks", (req, res) => {
-    const { title, description, state } = req.body;
-    if (!title || !description || !state) {
-        return res.status(400).json({ message: "All fields are required" });
-    }
+    // Créer une nouvelle tâche
     const newTask = {
         id: tasks.length + 1,
-        title,
+        titre,
         description,
-        state,
+        etat,
     };
+
     tasks.push(newTask);
     res.status(201).json(newTask);
 });
 
-// 4. Update a task by ID
-app.put("/tasks/:id", (req, res) => {
-    const { id } = req.params;
-    const { title, description, state } = req.body;
-
-    const taskIndex = tasks.findIndex((t) => t.id === parseInt(id));
-
-    if (taskIndex !== -1) {
-        tasks[taskIndex] = { ...tasks[taskIndex], title, description, state };
-        res.json(tasks[taskIndex]);
-    } else {
-        res.status(404).json({ message: "Task not found" });
-    }
+// 2. Récupérer toutes les tâches
+app.get("/api/tasks", (req, res) => {
+    res.json(tasks);
 });
 
-// 5. Delete a task by ID
-app.delete("/tasks/:id", (req, res) => {
+// 3. Mettre à jour une tâche
+app.put("/api/tasks/:id", (req, res) => {
     const { id } = req.params;
-    const taskIndex = tasks.findIndex((t) => t.id === parseInt(id));
+    const { titre, description, etat } = req.body;
 
-    if (taskIndex !== -1) {
-        tasks.splice(taskIndex, 1);
-        res.json({ message: "Task deleted successfully" });
-    } else {
-        res.status(404).json({ message: "Task not found" });
+    // Trouver la tâche
+    const taskIndex = tasks.findIndex((task) => task.id === parseInt(id));
+    if (taskIndex === -1) {
+        return res.status(404).json({ message: "Tâche non trouvée." });
     }
+
+    // Mise à jour des champs
+    if (titre) tasks[taskIndex].titre = titre;
+    if (description) tasks[taskIndex].description = description;
+    if (etat && ["todo", "doing", "done"].includes(etat)) {
+        tasks[taskIndex].etat = etat;
+    }
+
+    res.json(tasks[taskIndex]);
 });
 
-// Start the server
+// 4. Supprimer une tâche
+app.delete("/api/tasks/:id", (req, res) => {
+    const { id } = req.params;
+
+    // Trouver la tâche
+    const taskIndex = tasks.findIndex((task) => task.id === parseInt(id));
+    if (taskIndex === -1) {
+        return res.status(404).json({ message: "Tâche non trouvée." });
+    }
+
+    // Supprimer la tâche
+    tasks.splice(taskIndex, 1);
+    res.json({ message: "Tâche supprimée avec succès." });
+});
+
+// Démarrer le serveur
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Serveur en cours d'exécution sur http://localhost:${PORT}`);
 });
